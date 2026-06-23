@@ -1,0 +1,61 @@
+# Gemma 4 research-loop assistant for local Ollama.
+#
+# Build:
+#   ollama create gemma4-researcher -f ollama/Modelfile.gemma4-researcher
+#
+# Run:
+#   ollama run gemma4-researcher
+#
+# Base model notes:
+# - gemma4:e4b-mlx is Gemma 4's Effective 4B MLX build for Apple Silicon.
+# - For lighter edge use, change FROM to gemma4:e2b.
+# - For stronger workstation reasoning, change FROM to gemma4:12b, gemma4:26b,
+#   or gemma4:31b. Apple Silicon users can try matching -mlx tags where
+#   available.
+
+FROM gemma4:e4b-mlx
+
+# Requires Gemma 4-capable Ollama builds.
+REQUIRES 0.30.0
+
+# Load/runtime parameters.
+#
+# num_ctx: context window. Gemma 4 edge models support 128K context and the
+# larger workstation models support 256K. 65536 is a practical local default
+# for a 24 GB Apple Silicon MacBook Pro without making every request expensive.
+PARAMETER num_ctx 65536
+PARAMETER num_batch 512
+PARAMETER num_gpu -1
+PARAMETER main_gpu 0
+PARAMETER use_mmap true
+PARAMETER num_thread 0
+PARAMETER draft_num_predict 0
+
+# Prompt and generation length.
+PARAMETER num_keep 4
+PARAMETER num_predict 4096
+
+# Gemma 4 recommended sampling defaults from the Ollama model card.
+PARAMETER seed 42
+PARAMETER temperature 1.0
+PARAMETER top_k 64
+PARAMETER top_p 0.95
+PARAMETER min_p 0.05
+PARAMETER typical_p 1.0
+
+# Repetition and penalty controls. repeat_last_n -1 means use the full active
+# context for repetition checks.
+PARAMETER repeat_last_n -1
+PARAMETER repeat_penalty 1.1
+PARAMETER presence_penalty 0.0
+PARAMETER frequency_penalty 0.0
+
+# Stop marker. Kept conservative so Ollama's Gemma 4 native chat behavior
+# remains intact.
+PARAMETER stop "<|endoftext|>"
+
+LICENSE """
+This Modelfile configures an Ollama model derived from Google's Gemma 4 model
+family. Use of the base model is governed by the Gemma 4 license and by the
+model artifact pulled through Ollama.
+"""
