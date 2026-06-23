@@ -1,0 +1,15 @@
+.DS_Store
+.env
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+dist/
+build/
+*.egg-info/
+data/
+models/
+outputs/
+runs/
